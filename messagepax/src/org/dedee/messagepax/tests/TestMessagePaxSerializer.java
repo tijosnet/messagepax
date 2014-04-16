@@ -22,6 +22,16 @@ public class TestMessagePaxSerializer extends TestCase {
 		assertEquals("C0C2C3", s.toHexString());
 	}
 
+	public void testByte() throws Exception {
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
+		s.writeByte(null);
+		s.writeByte(0);
+		s.writeByte(1);
+		s.writeByte(-32);
+		s.writeByte(-64);
+		assertEquals("C00001E0D0C0", s.toHexString());
+	}
+
 	public void testPositiveIntSmall() throws Exception {
 		MessagePaxSerializer s = new MessagePaxSerializer(buf);
 		s.writeInteger(null);
