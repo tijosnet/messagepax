@@ -1,14 +1,11 @@
 package org.dedee.messagepax;
 
 import java.io.IOException;
-import java.io.OutputStream;
 
-public class MessagePaxSerializer {
+public class MessagePaxSerializer extends BaseSerializer {
 
-	private OutputStream os;
-
-	public MessagePaxSerializer(OutputStream os) {
-		this.os = os;
+	public MessagePaxSerializer(byte[] b) {
+		super(b);
 	}
 
 	public void writeBoolean(Boolean b) throws IOException {
@@ -24,53 +21,72 @@ public class MessagePaxSerializer {
 			// +------+
 			// | 0xc3 |
 			// +------+
-			os.write(b.booleanValue() ? 0xc3 : 0xc2);
+			addByte(b.booleanValue() ? 0xc3 : 0xc2);
 		}
 	}
 
-	public void writeInteger(long l) throws IOException {
-
+	public void writeInteger(int d) throws IOException {
+		if (d < -(1 << 5)) {
+			if (d < -(1 << 15)) {
+				// int 32 stores a 32-bit big-endian signed integer
+				// +--------+--------+--------+--------+--------+
+				// | 0xd2 |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+				// +--------+--------+--------+--------+--------+
+				addByte(0xd2);
+				addInt32(d);
+			} else if (d < -(1 << 7)) {
+				// int 16 stores a 16-bit big-endian signed integer
+				// +--------+--------+--------+
+				// | 0xd1 |ZZZZZZZZ|ZZZZZZZZ|
+				// +--------+--------+--------+
+				addByte(0xd1);
+				addInt16(d);
+			} else {
+				// int 8 stores a 8-bit signed integer
+				// +--------+--------+
+				// | 0xd0 |ZZZZZZZZ|
+				// +--------+--------+
+				addByte(0xd0);
+				addByte(d);
+			}
+		} else if (d < (1 << 7)) {
+			// positive fixnum stores 7-bit positive integer
+			// +--------+
+			// |0XXXXXXX|
+			// +--------+
+			addByte(d);
+		} else {
+			if (d < (1 << 8)) {
+				// uint 8 stores a 8-bit unsigned integer
+				// +--------+--------+
+				// | 0xcc |ZZZZZZZZ|
+				// +--------+--------+
+				addByte(0xcc);
+				addByte(d);
+			} else if (d < (1 << 16)) {
+				// uint 16 stores a 16-bit big-endian unsigned integer
+				// +--------+--------+--------+
+				// | 0xcd |ZZZZZZZZ|ZZZZZZZZ|
+				// +--------+--------+--------+
+				addByte(0xcd);
+				addInt16(d);
+			} else {
+				// uint 32 stores a 32-bit big-endian unsigned integer
+				// +--------+--------+--------+--------+--------+
+				// | 0xce |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ
+				// +--------+--------+--------+--------+--------+
+				addByte(0xce);
+				addInt32(d);
+			}
+		}
 	}
 
 	public void writeInteger(Integer i) throws IOException {
 		if (i == null) {
 			writeNil();
 		} else {
-			if (i >= 0) {
-				if (i <= 0x7f) {
-					// positive fixnum stores 7-bit positive integer
-					// +--------+
-					// |0XXXXXXX|
-					// +--------+
-					os.write(i);
-				} else if (i == 0xff) {
-					// uint 8 stores a 8-bit unsigned integer
-					// +------+--------+
-					// | 0xcc |ZZZZZZZZ|
-					// +------+--------+
-					os.write(0xcc);
-					os.write(i);
-				} else if (i <= 0xffff) {
-					// uint 16 stores a 16-bit big-endian unsigned integer
-					// +------+--------+--------+
-					// | 0xcd |ZZZZZZZZ|ZZZZZZZZ|
-					// +------+--------+--------+
-					os.write(0xcd);
-					os.write((i >> 8) & 0xff);
-					os.write((i >> 0) & 0xff);
-				}
+			writeInteger(i.intValue());
 
-			} else {
-				i = Math.abs(i);
-				if (i <= 0x1f) {
-					// negative fixnum stores 5-bit negative integer
-					// +--------+
-					// |111YYYYY|
-					// +--------+
-					os.write(0xe0 | i & 0x1f);
-				}
-
-			}
 		}
 	}
 
@@ -79,7 +95,7 @@ public class MessagePaxSerializer {
 		// +--------+
 		// | 0xc0 |
 		// +--------+
-		os.write(0xc0);
+		addByte(0xc0);
 	}
 
 }

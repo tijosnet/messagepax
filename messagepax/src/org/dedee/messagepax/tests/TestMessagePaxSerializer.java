@@ -1,106 +1,61 @@
 package org.dedee.messagepax.tests;
 
-import java.io.ByteArrayOutputStream;
-
 import junit.framework.TestCase;
 
 import org.dedee.messagepax.MessagePaxSerializer;
 
 public class TestMessagePaxSerializer extends TestCase {
 
+	private byte[] buf = new byte[256];
+
 	public void testNil() throws Exception {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		MessagePaxSerializer s = new MessagePaxSerializer(os);
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
 		s.writeNil();
-		byte[] b = os.toByteArray();
-		assertNotNull(b);
-		assertEquals(1, b.length);
-		assertEquals(0xc0, b[0] & 0xff);
+		assertEquals("C0", s.toHexString());
 	}
 
 	public void testBoolean() throws Exception {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		MessagePaxSerializer s = new MessagePaxSerializer(os);
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
 		s.writeBoolean(null);
 		s.writeBoolean(false);
 		s.writeBoolean(true);
-		byte[] b = os.toByteArray();
-		assertNotNull(b);
-		assertEquals(3, b.length);
-		assertEquals(0xc0, b[0] & 0xff);
-		assertEquals(0xc2, b[1] & 0xff);
-		assertEquals(0xc3, b[2] & 0xff);
+		assertEquals("C0C2C3", s.toHexString());
 	}
 
 	public void testPositiveIntSmall() throws Exception {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		MessagePaxSerializer s = new MessagePaxSerializer(os);
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
 		s.writeInteger(null);
 		s.writeInteger(0);
 		s.writeInteger(1);
 		s.writeInteger(0x7f);
-		byte[] b = os.toByteArray();
-		assertNotNull(b);
-		assertEquals(4, b.length);
-		assertEquals(0xc0, b[0] & 0xff);
-		assertEquals(0x00, b[1] & 0xff);
-		assertEquals(0x01, b[2] & 0xff);
-		assertEquals(0x7f, b[3] & 0xff);
+		assertEquals("C000017F", s.toHexString());
 	}
 
 	public void testPositiveIntFF() throws Exception {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		MessagePaxSerializer s = new MessagePaxSerializer(os);
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
 		s.writeInteger(0xff);
-		byte[] b = os.toByteArray();
-		assertNotNull(b);
-		assertEquals(2, b.length);
-		assertEquals(0xcc, b[0] & 0xff);
-		assertEquals(0xff, b[1] & 0xff);
+		assertEquals("CCFF", s.toHexString());
 	}
 
-	public void testPositiveIntUint16() throws Exception {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		MessagePaxSerializer s = new MessagePaxSerializer(os);
+	public void testPositiveInt16() throws Exception {
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
 		s.writeInteger(0xffff);
 		s.writeInteger(0xaaaa);
-		byte[] b = os.toByteArray();
-		assertNotNull(b);
-		assertEquals(6, b.length);
-		assertEquals(0xcd, b[0] & 0xff);
-		assertEquals(0xff, b[1] & 0xff);
-		assertEquals(0xff, b[2] & 0xff);
-		assertEquals(0xcd, b[3] & 0xff);
-		assertEquals(0xaa, b[4] & 0xff);
-		assertEquals(0xaa, b[5] & 0xff);
+		assertEquals("CDFFFFCDAAAA", s.toHexString());
 	}
 
-	public void testPositiveIntUint32() throws Exception {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		MessagePaxSerializer s = new MessagePaxSerializer(os);
-		s.writeInteger(0xffff);
-		s.writeInteger(0xaaaa);
-		byte[] b = os.toByteArray();
-		assertNotNull(b);
-		assertEquals(6, b.length);
-		assertEquals(0xcd, b[0] & 0xff);
-		assertEquals(0xff, b[1] & 0xff);
-		assertEquals(0xff, b[2] & 0xff);
-		assertEquals(0xcd, b[3] & 0xff);
-		assertEquals(0xaa, b[4] & 0xff);
-		assertEquals(0xaa, b[5] & 0xff);
+	public void testPositiveInt32() throws Exception {
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
+		s.writeInteger(0x7fffffff);
+		s.writeInteger(0xaaaaaaaa);
+		assertEquals("CE7FFFFFFFD2AAAAAAAA", s.toHexString());
 	}
 
 	public void testNegativeIntSmall() throws Exception {
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		MessagePaxSerializer s = new MessagePaxSerializer(os);
+		MessagePaxSerializer s = new MessagePaxSerializer(buf);
 		s.writeInteger(-1);
 		s.writeInteger(-31);
-		byte[] b = os.toByteArray();
-		assertNotNull(b);
-		assertEquals(2, b.length);
-		assertEquals(0xe1, b[0] & 0xff);
-		assertEquals(0xff, b[1] & 0xff);
+		assertEquals("FFE1", s.toHexString());
 	}
 
 }
