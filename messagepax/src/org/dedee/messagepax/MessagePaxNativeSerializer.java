@@ -29,6 +29,27 @@ public class MessagePaxNativeSerializer extends BaseSerializer {
 		addByte(b ? 0xc3 : 0xc2);
 	}
 
+	public void writeLong(long d) throws IOException {
+		if (d < -(1L << 31)) {
+			// int 64 stores a 64-bit big-endian signed integer
+			// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+			// |0xd3|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+			// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+			addByte(0xd3);
+			addInt64(d);
+		} else if (d >= (1L << 32)) {
+			// uint 64 stores a 64-bit big-endian unsigned integer
+			// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+			// |0xcf|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+			// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+			addByte(0xcf);
+			addInt64(d);
+		} else {
+			// Ok it doesnt look like a long so encode as smaller int
+			writeInteger((int) d);
+		}
+	}
+
 	public void writeInteger(int d) throws IOException {
 		if (d < -(1 << 5)) {
 			if (d < -(1 << 15)) {
@@ -82,6 +103,62 @@ public class MessagePaxNativeSerializer extends BaseSerializer {
 				addByte(0xce);
 				addInt32(d);
 			}
+		}
+	}
+
+	public void writeByteArray(byte[] buffer, int offset, int len)
+			throws IOException {
+		if (buffer == null) {
+			writeNil();
+		} else {
+			if (len < 32) {
+				// fixstr stores a byte array whose length is upto 31 bytes:
+				// +--------+======+
+				// |101XXXXX| data |
+				// +--------+======+
+				addByte(0xa0 | len);
+			} else if (len < 65536) {
+				// str 16 stores a byte array whose length is upto (2^16)-1
+				// bytes:
+				// +------+--------+--------+======+
+				// | 0xda |ZZZZZZZZ|ZZZZZZZZ| data |
+				// +------+--------+--------+======+
+				addByte(0xda);
+				addInt16(len);
+			} else {
+				// str 32 stores a byte array whose length is upto (2^32)-1
+				// bytes:
+				// +------+--------+--------+--------+--------+======+
+				// | 0xdb |AAAAAAAA|AAAAAAAA|AAAAAAAA|AAAAAAAA| data |
+				// +------+--------+--------+--------+--------+======+
+				addByte(0xdb);
+				addInt32(len);
+			}
+			addBytes(buffer, offset, len);
+		}
+	}
+
+	public void writeListBegin(int size) throws IOException {
+		if (size < 16) {
+			// fixarray stores an array whose length is upto 15 elements:
+			// +--------+~~~~~~~~~~~+
+			// |1001XXXX| N objects |
+			// +--------+~~~~~~~~~~~+
+			addByte(0x90 | size);
+		} else if (size < 65536) {
+			// array 16 stores an array whose length is upto (2^16)-1 elements:
+			// +------+--------+--------+~~~~~~~~~~~+
+			// | 0xdc |YYYYYYYY|YYYYYYYY| N objects |
+			// +------+--------+--------+~~~~~~~~~~~+
+			addByte(0xdc);
+			addInt16(size);
+		} else {
+			// array 32 stores an array whose length is upto (2^32)-1 elements:
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~+
+			// | 0xdd |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ| N objects |
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~+
+			addByte(0xdd);
+			addInt32(size);
 		}
 	}
 }

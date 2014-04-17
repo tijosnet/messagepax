@@ -5,8 +5,8 @@ public class BaseSerializer {
 	private static final char[] CHARS = new char[] { '0', '1', '2', '3', '4',
 			'5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', };
 
-	private byte[] b;
-	private int pos;
+	protected byte[] b;
+	protected int pos;
 
 	public BaseSerializer(byte[] b) {
 		this.b = b;
@@ -38,6 +38,15 @@ public class BaseSerializer {
 		b[pos++] = (byte) ((x >>> 16) & 0xff);
 		b[pos++] = (byte) ((x >>> 8) & 0xff);
 		b[pos++] = (byte) ((x >>> 0) & 0xff);
+	}
+
+	protected void addBytes(byte[] buffer, int offset, int len) {
+		System.arraycopy(buffer, offset, this.b, pos, len);
+		pos += len;
+	}
+
+	public void reset() {
+		pos = 0;
 	}
 
 	public byte[] getBuffer() {
