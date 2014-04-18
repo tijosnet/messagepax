@@ -2,7 +2,9 @@ package org.dedee.messagepax.tests;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
@@ -159,6 +161,8 @@ public class TestCrosscheck extends TestCase {
 		}
 	}
 
+	// ------
+
 	public void testReadStringList() throws Exception {
 		// Empty
 		List<String> l1 = new ArrayList<String>();
@@ -184,5 +188,28 @@ public class TestCrosscheck extends TestCase {
 		System.out.println(Utils.hex(b));
 		MessagePaxDeserializer d = new MessagePaxDeserializer(b);
 		return d.readStringList(b);
+	}
+
+	// ------
+
+	public void testReadStringMap() throws Exception {
+		Map<String, String> map1 = new HashMap<String, String>();
+		for (int i = 0; i < 1000; i++) {
+			map1.put("" + i, "A" + i);
+			Map<String, String> map2 = ourDecodeStringMap(msgPackEncodeStringMap(map1));
+			assertEquals(map1, map2);
+		}
+	}
+
+	private byte[] msgPackEncodeStringMap(Map<String, String> map)
+			throws IOException {
+		BufferPacker packer = msgpack.createBufferPacker();
+		packer.write(map);
+		return packer.toByteArray();
+	}
+
+	private Map<String, String> ourDecodeStringMap(byte[] b) throws IOException {
+		MessagePaxDeserializer d = new MessagePaxDeserializer(b);
+		return d.readStringMap(b);
 	}
 }
