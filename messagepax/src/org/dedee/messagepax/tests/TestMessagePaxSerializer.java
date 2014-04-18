@@ -135,19 +135,19 @@ public class TestMessagePaxSerializer extends TestCase {
 	public void testListString() throws Exception {
 		s.reset();
 		List<String> list = null;
-		s.writeList(list);
+		s.writeListString(list);
 		assertEquals("C0", s.toHexString());
 		list = new ArrayList<>();
-		s.writeList(list);
+		s.writeListString(list);
 		assertEquals("C090", s.toHexString());
 		list.add("A");
 		list.add("B");
-		s.writeList(list);
+		s.writeListString(list);
 		assertEquals("C09092A141A142", s.toHexString());
 		for (int i = 0; i < 40; i++) {
 			list.add("C");
 		}
-		s.writeList(list);
+		s.writeListString(list);
 		assertEquals(
 				"C09092A141A142DC002AA141A142A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143",
 				s.toHexString());

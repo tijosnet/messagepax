@@ -1,5 +1,9 @@
 package org.dedee.messagepax.tests;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 import org.dedee.messagepax.MessagePaxDeserializer;
@@ -43,6 +47,11 @@ public class TestCrosscheck extends TestCase {
 			"CD0400", // 1024
 	};
 
+	private String[] STRINGS = new String[] { "Hello world", "1", "",
+			"The quick brown fox jumps over the lazy dog", null };
+	private int[] SPECIAL_STRIN_LENGTHS = new int[] { 0, 1, 2, 5, 10, 20, 30,
+			31, 32, 33, 0xffff - 1, 0xffff, 0xfffff };
+
 	private String stdEncode(Integer i) throws Exception {
 		BufferPacker packer = msgpack.createBufferPacker();
 		packer.write(i);
@@ -53,7 +62,6 @@ public class TestCrosscheck extends TestCase {
 	private Integer stdDecode(String s) throws Exception {
 		BufferUnpacker unpacker = msgpack.createBufferUnpacker(Utils.dehex(s));
 		return unpacker.readInt();
-		// return unpacker.readValue().asIntegerValue().intValue();
 	}
 
 	private String ourEncode(Integer i) throws Exception {
@@ -79,15 +87,10 @@ public class TestCrosscheck extends TestCase {
 
 	public void testOurDecoding() throws Exception {
 		for (int i = 0; i < INTEGERS.length; i++) {
-
 			String x = INTEGER_CODES[i];
 			System.out.println(x);
-
 			Integer d = ourDecode(x);
 			assertEquals(stdDecode(x), d);
-
-			// assertEquals("Decoding int " + INTEGERS[i] + " from string " + x
-			// + " failed", INTEGERS[i], d.intValue());
 		}
 	}
 
@@ -120,5 +123,66 @@ public class TestCrosscheck extends TestCase {
 			int i2 = d.readInteger();
 			assertEquals(INTEGERS[i], i2);
 		}
+	}
+
+	public void testStringStandardStuff() throws Exception {
+		for (String s1 : STRINGS) {
+			// MsgPack ORG
+			BufferPacker packer = msgpack.createBufferPacker();
+			packer.write(s1);
+			byte[] b = packer.toByteArray();
+			System.out.println(s1 + ": '" + Utils.hex(b, 0, b.length) + "'");
+			// Unpack with our one
+			MessagePaxDeserializer d = new MessagePaxDeserializer(b);
+			String s2 = d.readString();
+			assertEquals(s1, s2);
+		}
+	}
+
+	public void testStringSpecialLengths() throws Exception {
+		for (int len : SPECIAL_STRIN_LENGTHS) {
+			System.out.println("String length: " + len);
+			// Prepare string
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < len; i++) {
+				sb.append("X");
+			}
+			String s = sb.toString();
+			// MsgPack ORG
+			BufferPacker packer = msgpack.createBufferPacker();
+			packer.write(s);
+			byte[] b = packer.toByteArray();
+			// Unpack with our one
+			MessagePaxDeserializer d = new MessagePaxDeserializer(b);
+			String s2 = d.readString();
+			assertEquals(s, s2);
+		}
+	}
+
+	public void testReadStringList() throws Exception {
+		// Empty
+		List<String> l1 = new ArrayList<String>();
+		List<String> l2 = ourDecodeStringList(msgPackEncodeStringList(l1));
+		assertEquals(l1, l2);
+		// Hello world
+		l1.add("Hello world");
+		l2 = ourDecodeStringList(msgPackEncodeStringList(l1));
+		assertEquals(l1, l2);
+		// Hello world
+		l1.add("Hello world");
+		l2 = ourDecodeStringList(msgPackEncodeStringList(l1));
+		assertEquals(l1, l2);
+	}
+
+	private byte[] msgPackEncodeStringList(List<String> l) throws IOException {
+		BufferPacker packer = msgpack.createBufferPacker();
+		packer.write(l);
+		return packer.toByteArray();
+	}
+
+	private List<String> ourDecodeStringList(byte[] b) throws IOException {
+		System.out.println(Utils.hex(b));
+		MessagePaxDeserializer d = new MessagePaxDeserializer(b);
+		return d.readStringList(b);
 	}
 }

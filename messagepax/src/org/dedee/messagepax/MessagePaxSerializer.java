@@ -47,7 +47,7 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 		writeByteArray(buffer, 0, len);
 	}
 
-	public void writeList(List<String> list) throws IOException {
+	public void writeListString(List<String> list) throws IOException {
 		if (list == null) {
 			writeNil();
 		} else {

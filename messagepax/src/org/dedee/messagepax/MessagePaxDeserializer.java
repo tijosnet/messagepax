@@ -1,6 +1,8 @@
 package org.dedee.messagepax;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MessagePaxDeserializer extends BaseDeserializer {
 
@@ -75,6 +77,105 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		}
 	}
 
+	public byte[] readByteArray() {
+		int x = readByte();
+		if (isNil(x)) {
+			return null;
+		} else {
+			int len = readLen(x);
+			byte[] ret = new byte[len];
+			System.arraycopy(b, pos, ret, 0, len);
+			pos += len;
+			return ret;
+		}
+	}
+
+	public String readString() {
+		int x = readByte();
+		if (isNil(x)) {
+			return null;
+		} else {
+			int len = readLen(x);
+			String s = new String(b, pos, len);
+			pos += len;
+			return s;
+		}
+	}
+
+	private int readLen(int x) {
+		int len = 0;
+		if ((x & 0xa0) == 0xa0) {
+			// fixstr stores a byte array whose length is upto 31 bytes:
+			// +--------+======+
+			// |101XXXXX| data |
+			// +--------+======+
+			len = x & 0x1f;
+		} else if (x == 0xda) {
+			// str 16 stores a byte array whose length is upto (2^16)-1
+			// bytes:
+			// +------+--------+--------+======+
+			// | 0xda |ZZZZZZZZ|ZZZZZZZZ| data |
+			// +------+--------+--------+======+
+			len = readInt16() & 0xffff;
+		} else if (x == 0xdb) {
+			// str 32 stores a byte array whose length is upto (2^32)-1
+			// bytes:
+			// +------+--------+--------+--------+--------+======+
+			// | 0xdb |AAAAAAAA|AAAAAAAA|AAAAAAAA|AAAAAAAA| data |
+			// +------+--------+--------+--------+--------+======+
+			len = readInt32() & 0x7fffffff;
+		}
+		return len;
+	}
+
+	private int readListLen(int x) {
+		int len = 0;
+		if ((x & 0x90) == 0x90) {
+			// fixarray stores an array whose length is upto 15 elements:
+			// +--------+~~~~~~~~~~~+
+			// |1001XXXX| N objects |
+			// +--------+~~~~~~~~~~~+
+			len = x & 0x0f;
+		} else if (x == 0xdc) {
+			// array 16 stores an array whose length is upto (2^16)-1 elements:
+			// +------+--------+--------+~~~~~~~~~~~+
+			// | 0xdc |YYYYYYYY|YYYYYYYY| N objects |
+			// +------+--------+--------+~~~~~~~~~~~+
+			len = readInt16() & 0xffff;
+		} else if (x == 0xdd) {
+			// array 32 stores an array whose length is upto (2^32)-1 elements:
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~+
+			// | 0xdd |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ| N objects |
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~+
+			len = readInt32() & 0x7fffffff;
+		}
+		return len;
+	}
+
+	public int readMapBegin(int x) {
+		int len = 0;
+		if ((x & 0x90) == 0x90) {
+			// fixmap stores a map whose length is up to 15 elements
+			// +--------+~~~~~~~~~~~~~+
+			// |1000XXXX| N*2 objects |
+			// +--------+~~~~~~~~~~~~~+
+			len = x & 0x0f;
+		} else if (x == 0xde) {
+			// map 16 stores a map whose length is up to (2^16)-1 elements
+			// +------+--------+--------+~~~~~~~~~~~~~+
+			// | 0xde |YYYYYYYY|YYYYYYYY| N*2 objects |
+			// +------+--------+--------+~~~~~~~~~~~~~+
+			len = readInt16() & 0xffff;
+		} else if (x == 0xdf) {
+			// map 32 stores a map whose length is up to (2^32)-1 elements
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~~~+
+			// | 0xdf |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ| N*2 objects |
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~~~+
+			len = readInt32() & 0x7fffffff;
+		}
+		return len;
+	}
+
 	public void reset(String hexString) {
 		// if (b == null || b.length < (hexString.length() / 2)) {
 		// b = new byte[hexString.length() / 2];
@@ -88,4 +189,19 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		}
 		pos = 0;
 	}
+
+	public List<String> readStringList(byte[] b) throws IOException {
+		int x = readByte();
+		if (isNil(x)) {
+			return null;
+		} else {
+			int len = readListLen(x);
+			List<String> l = new ArrayList<String>();
+			for (int i = 0; i < len; i++) {
+				l.add(readString());
+			}
+			return l;
+		}
+	}
+
 }
