@@ -161,4 +161,28 @@ public class MessagePaxNativeSerializer extends BaseSerializer {
 			addInt32(size);
 		}
 	}
+
+	public void writeMapBegin(int size) throws IOException {
+		if (size < 16) {
+			// fixmap stores a map whose length is up to 15 elements
+			// +--------+~~~~~~~~~~~~~+
+			// |1000XXXX| N*2 objects |
+			// +--------+~~~~~~~~~~~~~+
+			addByte(0x80 | size);
+		} else if (size < 65536) {
+			// map 16 stores a map whose length is up to (2^16)-1 elements
+			// +------+--------+--------+~~~~~~~~~~~~~+
+			// | 0xde |YYYYYYYY|YYYYYYYY| N*2 objects |
+			// +------+--------+--------+~~~~~~~~~~~~~+
+			addByte(0xde);
+			addInt16(size);
+		} else {
+			// map 32 stores a map whose length is up to (2^32)-1 elements
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~~~+
+			// | 0xdf |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ| N*2 objects |
+			// +------+--------+--------+--------+--------+~~~~~~~~~~~~~+
+			addByte(0xdf);
+			addInt32(size);
+		}
+	}
 }

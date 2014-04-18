@@ -1,7 +1,9 @@
 package org.dedee.messagepax;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 
@@ -19,14 +21,6 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 		}
 	}
 
-	// public void writeByte(Byte i) throws IOException {
-	// if (i == null) {
-	// writeNil();
-	// } else {
-	// writeInteger(i.intValue() & 0xff);
-	// }
-	// }
-
 	public void writeInteger(Integer i) throws IOException {
 		if (i == null) {
 			writeNil();
@@ -41,7 +35,6 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 		} else {
 			writeLong(l.longValue());
 		}
-
 	}
 
 	public void writeString(String s) throws IOException {
@@ -62,6 +55,23 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 			writeListBegin(size);
 			for (int i = 0; i < size; i++) {
 				writeString(list.get(i));
+			}
+		}
+	}
+
+	public void writeMapStringString(Map<String, String> map)
+			throws IOException {
+		if (map == null) {
+			writeNil();
+		} else {
+			int size = map.size();
+			writeMapBegin(size);
+			Iterator<String> it = map.keySet().iterator();
+			for (int i = 0; i < size; i++) {
+				String key = it.next();
+				String val = map.get(key);
+				writeString(key);
+				writeString(val);
 			}
 		}
 	}
