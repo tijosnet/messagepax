@@ -29,7 +29,7 @@ public class Utils {
 	}
 
 	public static void dehex(String hex, byte[] b, int off) {
-		for (int i = 0; i < b.length; i++) {
+		for (int i = 0; i < hex.length() / 2; i++) {
 			b[i + off] = (byte) Integer.parseInt(
 					hex.substring(2 * i, 2 * i + 2), 16);
 		}
