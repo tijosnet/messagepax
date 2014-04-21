@@ -1,5 +1,7 @@
 package org.dedee.messagepax.tests;
 
+import java.io.IOException;
+
 import junit.framework.TestCase;
 
 import org.dedee.messagepax.MessagePaxDeserializer;
@@ -44,5 +46,14 @@ public class TestMessagePaxDeserializer extends TestCase {
 	public void testSignedInt16() throws Exception {
 		d.reset("D1FFFF");
 		assertEquals((Integer) (-1), d.readInteger());
+	}
+
+	public void testBoolean() throws IOException {
+		d.reset("C0");
+		assertNull(d.readBoolean());
+		d.reset("C2");
+		assertFalse(d.readBoolean());
+		d.reset("C3");
+		assertTrue(d.readBoolean());
 	}
 }

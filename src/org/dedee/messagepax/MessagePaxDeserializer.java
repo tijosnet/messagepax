@@ -14,6 +14,21 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		super(b);
 	}
 
+	public Boolean readBoolean() throws IOException {
+		int x = readByte();
+		if (isNil(x)) {
+			return null;
+		} else {
+			if (x == 0xc3)
+				return true;
+			else if (x == 0xc2)
+				return false;
+			else
+				throw new IOException(
+						"Illegal byte could not be interpreted as boolean");
+		}
+	}
+
 	public Integer readInteger() throws IOException {
 		int x = readByte();
 		if (isNil(x)) {
