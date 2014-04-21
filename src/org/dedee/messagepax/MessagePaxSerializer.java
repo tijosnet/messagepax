@@ -41,7 +41,7 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 		byte[] buffer = null;
 		int len = 0;
 		if (s != null) {
-			buffer = s.getBytes("UTF8");
+			buffer = s.getBytes(Consts.STRING_ENCODING);
 			len = buffer.length;
 		}
 		writeByteArray(buffer, 0, len);

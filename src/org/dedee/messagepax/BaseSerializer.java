@@ -1,9 +1,8 @@
 package org.dedee.messagepax;
 
-public class BaseSerializer {
+import org.dedee.messagepax.tests.Utils;
 
-	private static final char[] CHARS = new char[] { '0', '1', '2', '3', '4',
-			'5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', };
+public class BaseSerializer {
 
 	protected byte[] b;
 	protected int pos;
@@ -58,11 +57,6 @@ public class BaseSerializer {
 	}
 
 	public String toHexString() {
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < pos; i++) {
-			sb.append(CHARS[(b[i] >> 4) & 0x0f]);
-			sb.append(CHARS[(b[i] >> 0) & 0x0f]);
-		}
-		return sb.toString();
+		return Utils.hex(b, 0, pos);
 	}
 }

@@ -1,6 +1,5 @@
 package org.dedee.messagepax;
 
-
 public class BaseDeserializer {
 
 	protected byte[] b;

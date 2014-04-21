@@ -2,23 +2,19 @@
 	<description>
 	</description>
 
-	<!-- set global properties for this build -->
 	<property name="src" location="src" />
 	<property name="build" location="build" />
 	<property name="dist" location="dist" />
 	<property name="reports" location="reports" />
 
-
 	<target name="init">
-		<!-- Create the time stamp -->
 		<tstamp />
-		<!-- Create the build directory structure used by compile -->
 		<mkdir dir="${build}" />
+		<mkdir dir="${dist}" />
 		<mkdir dir="${reports}" />
 	</target>
 
 	<target name="compile" depends="init" description="compile the source ">
-		<!-- Compile the java code from ${src} into ${build} -->
 		<javac compiler="javac1.5" includeantruntime="false" srcdir="${src}" destdir="${build}">
 			<classpath>
 				<pathelement location="build" />
@@ -48,15 +44,12 @@
 	</target>
 
 	<target name="dist" depends="junit" description="generate the distribution">
-		<!-- Create the distribution directory -->
-		<mkdir dir="${dist}/lib" />
-		<!-- Put everything in ${build} into the MyProject-${DSTAMP}.jar file -->
-		<jar jarfile="${dist}/messagepax-${DSTAMP}-${TSTAMP}.jar" basedir="${build}" />
+		<jar jarfile="${dist}/messagepax.jar" basedir="${build}" excludes="org.dedee.messagepax.tests.*.class" />
 	</target>
 
 	<target name="clean" description="clean up">
-		<!-- Delete the ${build} and ${dist} directory trees -->
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
+		<delete dir="${reports}" />
 	</target>
 </project>

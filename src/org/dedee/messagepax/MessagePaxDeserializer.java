@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MessagePaxDeserializer extends BaseDeserializer {
+import org.dedee.messagepax.tests.Utils;
 
-	private static final String HEX = "0123456789ABCDEF";
+public class MessagePaxDeserializer extends BaseDeserializer {
 
 	public MessagePaxDeserializer(byte[] b) {
 		super(b);
@@ -98,7 +98,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 			return null;
 		} else {
 			int len = readLen(x);
-			String s = new String(b, pos, len, "UTF8");
+			String s = new String(b, pos, len, Consts.STRING_ENCODING);
 			pos += len;
 			return s;
 		}
@@ -191,17 +191,8 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 	}
 
 	public void reset(String hexString) {
-		// if (b == null || b.length < (hexString.length() / 2)) {
-		// b = new byte[hexString.length() / 2];
-		// }
 		pos = 0;
-		int len = hexString.length() / 2;
-		for (int i = 0; i < len; i++) {
-			int n1 = HEX.indexOf(hexString.charAt(pos++)) & 0x0f;
-			int n2 = HEX.indexOf(hexString.charAt(pos++)) & 0x0f;
-			b[i] = (byte) (n1 << 4 | n2);
-		}
-		pos = 0;
+		Utils.dehex(hexString, b, 0);
 	}
 
 	public List<String> readStringList(byte[] b) throws IOException {

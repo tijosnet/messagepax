@@ -20,12 +20,19 @@ public class Utils {
 		return b != null ? hex(b, 0, b.length) : "null";
 	}
 
-	public static byte[] dehex(String hexString) {
-		int len = hexString.length() / 2;
-		byte b[] = new byte[len];
-		for (int i = 0; i < len; i += 2) {
-			b[i] = (byte) (Integer.parseInt(hexString.substring(i, i + 2), 16) & 0xff);
+	public static byte[] dehex(String hex) {
+		byte[] b = new byte[hex.length() / 2];
+		for (int i = 0; i < b.length; i++) {
+			b[i] = (byte) Integer.parseInt(hex.substring(2 * i, 2 * i + 2), 16);
 		}
 		return b;
 	}
+
+	public static void dehex(String hex, byte[] b, int off) {
+		for (int i = 0; i < b.length; i++) {
+			b[i + off] = (byte) Integer.parseInt(
+					hex.substring(2 * i, 2 * i + 2), 16);
+		}
+	}
+
 }
