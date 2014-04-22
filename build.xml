@@ -36,15 +36,18 @@
 			<formatter type="xml" />
 			<batchtest fork="yes" todir="${reports}">
 				<fileset dir="${src}">
-					<include name="**/*Test*.java" />
-					<exclude name="**/AllTests.java" />
+					<include name="**/Test*.java" />
 				</fileset>
 			</batchtest>
 		</junit>
 	</target>
+	
+	<!-- defined for travis.org -->
+	<target name="test" depends="junit">
+	</target>
 
 	<target name="dist" depends="junit" description="generate the distribution">
-		<jar jarfile="${dist}/messagepax.jar" basedir="${build}" excludes="org.dedee.messagepax.tests.*.class" />
+		<jar jarfile="${dist}/messagepax.jar" basedir="${build}" excludes="org.dedee.messagepax.test*.*.class" />
 	</target>
 
 	<target name="clean" description="clean up">

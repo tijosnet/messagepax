@@ -1,4 +1,4 @@
-package org.dedee.messagepax.tests;
+package org.dedee.messagepax.testapps;
 
 import java.io.IOException;
 
