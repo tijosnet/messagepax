@@ -1,4 +1,3 @@
-
 messagepax
 ==========
 
@@ -9,13 +8,13 @@ https://github.com/msgpack/msgpack/blob/master/spec.md
 
 
 
+Build Status:
+
+[![Build Status](https://travis-ci.org/dedee/messagepax.svg?branch=master)](https://travis-ci.org/dedee/messagepax)
 
 
 
-
-
-
-Copyright 2014 D. Pfeifle - dedee.de
+Copyright 2014 Dietrich Pfeifle - dedee.de
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
