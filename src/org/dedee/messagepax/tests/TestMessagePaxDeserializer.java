@@ -56,4 +56,22 @@ public class TestMessagePaxDeserializer extends TestCase {
 		d.reset("C3");
 		assertTrue(d.readBoolean());
 	}
+
+	public void testFloat() throws IOException {
+		d.reset("C0");
+		assertNull(d.readFloat());
+		d.reset("CA3F800000");
+		assertTrue(Math.abs(1.0d - d.readFloat()) < 0.0001);
+		d.reset("CABF800000");
+		assertTrue(Math.abs(-1.0d - d.readFloat()) < 0.0001);
+	}
+
+	public void testDouble() throws IOException {
+		d.reset("C0");
+		assertNull(d.readDouble());
+		d.reset("CB3FF0000000000000");
+		assertTrue(Math.abs(1.0d - d.readDouble()) < 0.0001);
+		d.reset("CBBFF0000000000000");
+		assertTrue(Math.abs(-1.0d - d.readDouble()) < 0.0001);
+	}
 }

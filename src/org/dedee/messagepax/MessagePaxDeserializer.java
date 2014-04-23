@@ -94,6 +94,26 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		}
 	}
 
+	public Float readFloat() {
+		int x = readByte();
+		if (isNil(x)) {
+			return null;
+		} else {
+			int bits = readInt32();
+			return Float.intBitsToFloat(bits);
+		}
+	}
+
+	public Double readDouble() {
+		int x = readByte();
+		if (isNil(x)) {
+			return null;
+		} else {
+			long bits = readInt64();
+			return Double.longBitsToDouble(bits);
+		}
+	}
+
 	public byte[] readByteArray() {
 		int x = readByte();
 		if (isNil(x)) {

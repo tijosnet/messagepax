@@ -37,6 +37,22 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 		}
 	}
 
+	public void writeFloat(Float f) throws IOException {
+		if (f == null) {
+			writeNil();
+		} else {
+			writeFloat(f.floatValue());
+		}
+	}
+
+	public void writeDouble(Double d) throws IOException {
+		if (d == null) {
+			writeNil();
+		} else {
+			writeDouble(d.doubleValue());
+		}
+	}
+
 	public void writeString(String s) throws IOException {
 		byte[] buffer = null;
 		int len = 0;

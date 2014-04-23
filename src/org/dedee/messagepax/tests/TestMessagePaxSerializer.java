@@ -1,5 +1,6 @@
 package org.dedee.messagepax.tests;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -201,5 +202,29 @@ public class TestMessagePaxSerializer extends TestCase {
 			s.writeString(val);
 		}
 		assertEquals("8401A13102A13203A13304A134", s.toHexString());
+	}
+
+	public void testFloat() throws IOException {
+		s.reset();
+		s.writeFloat(null);
+		assertEquals("C0", s.toHexString());
+		s.reset();
+		s.writeFloat(1.0f);
+		assertEquals("CA3F800000", s.toHexString());
+		s.reset();
+		s.writeFloat(-1.0f);
+		assertEquals("CABF800000", s.toHexString());
+	}
+
+	public void testDouble() throws IOException {
+		s.reset();
+		s.writeDouble(null);
+		assertEquals("C0", s.toHexString());
+		s.reset();
+		s.writeDouble(1.0d);
+		assertEquals("CB3FF0000000000000", s.toHexString());
+		s.reset();
+		s.writeDouble(-1.0d);
+		assertEquals("CBBFF0000000000000", s.toHexString());
 	}
 }

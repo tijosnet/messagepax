@@ -106,6 +106,29 @@ public class MessagePaxNativeSerializer extends BaseSerializer {
 		}
 	}
 
+	public void writeFloat(float f) {
+		// float 32 stores a floating point number in IEEE 754 single precision
+		// floating point number format:
+		// +------+--------+--------+--------+--------+
+		// | 0xca |XXXXXXXX|XXXXXXXX|XXXXXXXX|XXXXXXXX
+		// +------+--------+--------+--------+--------+
+		addByte(0xca);
+		int bits = Float.floatToIntBits(f);
+		addInt32(bits);
+	}
+
+	public void writeDouble(double d) {
+		// float 64 stores a floating point number in IEEE 754 double precision
+		// floating point number format:
+		// +--------+--------+--------+--------+--------+--------+--------+--------+--------+
+		// | 0xcb
+		// |YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|YYYYYYYY|
+		// +--------+--------+--------+--------+--------+--------+--------+--------+--------+
+		addByte(0xcb);
+		long bits = Double.doubleToLongBits(d);
+		addInt64(bits);
+	}
+
 	public void writeByteArray(byte[] buffer, int offset, int len)
 			throws IOException {
 		if (buffer == null) {
