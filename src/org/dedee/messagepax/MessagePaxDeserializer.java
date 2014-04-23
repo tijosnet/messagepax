@@ -94,6 +94,33 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		}
 	}
 
+	public Long readLong() throws IOException {
+		int x = readByte();
+		if (isNil(x)) {
+			return null;
+		} else {
+			long l = 0;
+			if (x == 0xd3) {
+				// int 64 stores a 64-bit big-endian signed integer
+				// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+				// |0xd3|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+				// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+				l = readInt64();
+			} else if (x == 0xcf) {
+				// uint 64 stores a 64-bit big-endian unsigned integer
+				// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+				// |0xcf|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|
+				// +----+--------+--------+--------+--------+--------+--------+--------+--------+
+				l = readInt64();
+			} else {
+				// 'unread' header - TODO improve that
+				pos--;
+				l = readInteger();
+			}
+			return Long.valueOf(l);
+		}
+	}
+
 	public Float readFloat() {
 		int x = readByte();
 		if (isNil(x)) {
