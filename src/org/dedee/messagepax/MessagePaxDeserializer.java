@@ -210,7 +210,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		Utils.dehex(hexString, b, 0);
 	}
 
-	public List<String> readStringList(byte[] b) throws IOException {
+	public List<String> readStringList() throws IOException {
 		Integer len = readListBegin();
 		if (len == null) {
 			return null;
@@ -223,7 +223,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		}
 	}
 
-	public Map<String, String> readStringMap(byte[] b) throws IOException {
+	public Map<String, String> readStringMap() throws IOException {
 		Integer len = readMapBegin();
 		if (len == null) {
 			return null;

@@ -187,7 +187,7 @@ public class TestCrosscheck extends TestCase {
 	private List<String> ourDecodeStringList(byte[] b) throws IOException {
 		System.out.println(Utils.hex(b));
 		MessagePaxDeserializer d = new MessagePaxDeserializer(b);
-		return d.readStringList(b);
+		return d.readStringList();
 	}
 
 	// ------
@@ -210,6 +210,6 @@ public class TestCrosscheck extends TestCase {
 
 	private Map<String, String> ourDecodeStringMap(byte[] b) throws IOException {
 		MessagePaxDeserializer d = new MessagePaxDeserializer(b);
-		return d.readStringMap(b);
+		return d.readStringMap();
 	}
 }
