@@ -1,4 +1,4 @@
-package org.dedee.messagepax;
+package org.messagepax;
 
 public interface MessagePaxSerializable {
 
