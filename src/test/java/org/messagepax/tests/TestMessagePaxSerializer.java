@@ -139,7 +139,7 @@ public class TestMessagePaxSerializer extends TestCase {
 		List<String> list = null;
 		s.writeListString(list);
 		assertEquals("C0", s.toHexString());
-		list = new ArrayList<>();
+		list = new ArrayList<String>();
 		s.writeListString(list);
 		assertEquals("C090", s.toHexString());
 		list.add("A");
