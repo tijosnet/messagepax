@@ -8,6 +8,7 @@ https://github.com/msgpack/msgpack/blob/master/spec.md
 
 Build Status:
 
+[![Build Status](https://buildhive.cloudbees.com/job/dedee/job/messagepax/badge/icon)](https://buildhive.cloudbees.com/job/dedee/job/messagepax/)
 [![Build Status](https://travis-ci.org/dedee/messagepax.svg?branch=master)](https://travis-ci.org/dedee/messagepax)
 
 
