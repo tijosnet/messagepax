@@ -4,7 +4,7 @@ package org.messagepax;
  * Base serializer class provides basic integer encoding providing some stream
  * based API on a simple byte array.
  */
-public class BaseSerializer {
+public abstract class BaseSerializer {
 
 	/** Buffer */
 	protected byte[] b;

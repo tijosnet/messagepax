@@ -5,7 +5,7 @@ package org.messagepax;
  * on an internal buffer (simple byte array) and provides a simple stream based
  * API.
  */
-public class BaseDeserializer {
+public abstract class BaseDeserializer {
 
 	/** Buffer */
 	protected byte[] b;

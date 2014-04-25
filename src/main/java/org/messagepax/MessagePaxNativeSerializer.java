@@ -7,7 +7,7 @@ import java.io.IOException;
  * All objects are Java native types, so the NIL handling is not be handled here
  * in this class.
  */
-public class MessagePaxNativeSerializer extends BaseSerializer {
+public abstract class MessagePaxNativeSerializer extends BaseSerializer {
 
 	/**
 	 * Creates native message pack serializer object
