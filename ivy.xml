@@ -1,6 +1,0 @@
-<ivy-module version="2.0">
-	<info organisation="org.messagepax" module="messagepax" />
-	<dependencies>
-		<dependency org="junit" name="junit-dep" rev="4.11" />
-	</dependencies>
-</ivy-module>

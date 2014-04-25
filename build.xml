@@ -1,4 +1,4 @@
-<project xmlns:ivy="antlib:org.apache.ivy.ant" name="messagepax" default="dist" basedir=".">
+<project name="messagepax" default="dist" basedir=".">
 	<description>
 	</description>
 
@@ -10,26 +10,17 @@
 	<property name="compiler" location="javac1.5" />
 	-->
 
-	<ivy:cachepath pathid="ivyclasspath" resolveId="ivy" file="ivy.xml" />
-
-	<target name="ivy_bootstrap">
-		<mkdir dir="${user.home}/.ant/lib" />
-		<get dest="${user.home}/.ant/lib/ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar" />
-	</target>
-
 	<target name="init">
 		<tstamp />
 		<mkdir dir="${build}" />
 		<mkdir dir="${dist}" />
 		<mkdir dir="${reports}" />
-		<ivy:retrieve />
 	</target>
 
 	<target name="clean" description="clean up">
 		<delete dir="${build}" />
 		<delete dir="${dist}" />
 		<delete dir="${reports}" />
-		<!--		<ivy:cleancache />   -->
 	</target>
 
 	<target name="compile" depends="init" description="compile the source">
@@ -37,7 +28,7 @@
 			<src path="${src}/main/java" />
 			<src path="${src}/test/java" />
 			<classpath>
-				<path refid="ivyclasspath" />
+				<pathelement location="lib/junit-4.11.jar" />
 			</classpath>
 		</javac>
 	</target>
@@ -46,7 +37,7 @@
 		<junit printsummary="yes" haltonfailure="yes">
 			<classpath>
 				<pathelement location="${build}" />
-				<path refid="ivyclasspath" />
+				<pathelement location="lib/junit-4.11.jar" />
 			</classpath>
 			<formatter type="xml" />
 			<batchtest fork="yes" todir="${reports}">
