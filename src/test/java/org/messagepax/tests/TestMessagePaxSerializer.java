@@ -169,26 +169,6 @@ public class TestMessagePaxSerializer extends TestCase {
 		assertEquals("9401020304", s.toHexString());
 	}
 
-	// public void testMapStringString() throws Exception {
-	// s.reset();
-	// Map<String, String> map = null;
-	// s.writeMapStringString(map);
-	// assertEquals("C0", s.toHexString());
-	// s.reset();
-	// map = new HashMap<String, String>();
-	// map.put("0", "_");
-	// s.writeMapStringString(map);
-	// assertEquals("81A130A15F", s.toHexString());
-	// for (int i = 1; i < 40; i++) {
-	// map.put("" + i, "_");
-	// }
-	// s.reset();
-	// s.writeMapStringString(map);
-	// assertEquals(
-	// "DE0028A23232A15FA23233A15FA23234A15FA23235A15FA23236A15FA23237A15FA23238A15FA23239A15FA23330A15FA23331A15FA23130A15FA23332A15FA23131A15FA23333A15FA23132A15FA23334A15FA23133A15FA23335A15FA23134A15FA23336A15FA23135A15FA23337A15FA23136A15FA23338A15FA23137A15FA23339A15FA23138A15FA23139A15FA130A15FA131A15FA132A15FA133A15FA134A15FA135A15FA136A15FA137A15FA138A15FA139A15FA23230A15FA23231A15F",
-	// s.toHexString());
-	// }
-
 	public void testAnotherMap() throws Exception {
 		s.reset();
 		Map<Integer, String> map = new HashMap<Integer, String>();
@@ -241,5 +221,27 @@ public class TestMessagePaxSerializer extends TestCase {
 		s.reset();
 		s.writeBigInteger(new BigInteger("9223372036854775807")); // 7FFFFFFFFFFFFFFF
 		assertEquals("CF7FFFFFFFFFFFFFFF", s.toHexString());
+	}
+
+	public void testSerializeDifferentIntegers() throws IOException {
+		s.reset();
+		for (int i = 0; i < TestMessagePaxDeserializer.INTEGERS.length; i++) {
+			int j = TestMessagePaxDeserializer.INTEGERS[i];
+			s.writeInteger(j);
+		}
+		assertEquals(
+				"D280000000CE7FFFFFFFFFFEFCF8F0E0D0C0D080D1FF00D1FE000001020408102040CC80CD0100CD0200CD0400",
+				s.toHexString());
+	}
+
+	public void testDeserializeDifferentStrings() throws IOException {
+		s.reset();
+		for (int i = 0; i < TestMessagePaxDeserializer.STRINGS.length; i++) {
+			String string = TestMessagePaxDeserializer.STRINGS[i];
+			s.writeString(string);
+		}
+		assertEquals(
+				"AB48656C6C6F20776F726C64A131A0DA002B54686520717569636B2062726F776E20666F78206A756D7073206F76657220746865206C617A7920646F67C0",
+				s.toHexString());
 	}
 }

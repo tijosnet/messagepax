@@ -7,8 +7,8 @@ repositories {
     mavenCentral()
 }
 
-sourceCompatibility = JavaVersion.VERSION_1_6
-targetCompatibility = JavaVersion.VERSION_1_6
+sourceCompatibility = JavaVersion.VERSION_1_5
+targetCompatibility = JavaVersion.VERSION_1_5
 
 group = 'org.messagepax'
 version = '0.1'
@@ -21,6 +21,4 @@ jar {
 
 dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.+'
-	testCompile group: 'org.javassist', name: 'javassist', version: '3.+'
-	testCompile group: 'org.msgpack', name: 'msgpack', version: '0.6.+'
 }

@@ -9,6 +9,13 @@ import org.messagepax.MessagePaxDeserializer;
 
 public class TestMessagePaxDeserializer extends TestCase {
 
+	protected static int[] INTEGERS = new int[] { Integer.MIN_VALUE,
+			Integer.MAX_VALUE, -1, -2, -4, -8, -16, -32, -64, -128, -256, -512,
+			0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024 };
+
+	protected static String[] STRINGS = new String[] { "Hello world", "1", "",
+			"The quick brown fox jumps over the lazy dog", null };
+
 	MessagePaxDeserializer d = new MessagePaxDeserializer(new byte[1024]);
 
 	public void testNil() throws Exception {
@@ -104,4 +111,21 @@ public class TestMessagePaxDeserializer extends TestCase {
 		d.reset("CF7FFFFFFFFFFFFFFF");
 		assertEquals(new BigInteger("9223372036854775807"), d.readBigInteger());
 	}
+
+	public void testDeserializeDifferentIntegers() throws IOException {
+		d.reset("D280000000CE7FFFFFFFFFFEFCF8F0E0D0C0D080D1FF00D1FE000001020408102040CC80CD0100CD0200CD0400");
+		for (int i = 0; i < INTEGERS.length; i++) {
+			int j = INTEGERS[i];
+			assertEquals(j, d.readInteger().intValue());
+		}
+	}
+
+	public void testDeserializeDifferentStrings() throws IOException {
+		d.reset("AB48656C6C6F20776F726C64A131A0DA002B54686520717569636B2062726F776E20666F78206A756D7073206F76657220746865206C617A7920646F67C0");
+		for (int i = 0; i < STRINGS.length; i++) {
+			String s = STRINGS[i];
+			assertEquals(s, d.readString());
+		}
+	}
+
 }

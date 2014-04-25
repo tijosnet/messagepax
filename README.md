@@ -1,17 +1,29 @@
-messagepax
-==========
+
+#messagepax
 
 Minimalistic MessagePack implementation for Java.
 
 Based on the MessagePack object serialization specification of Sadayuki Furuhashi.
 https://github.com/msgpack/msgpack/blob/master/spec.md
 
-
-
 Build Status:
 
 [![Build Status](https://travis-ci.org/dedee/messagepax.svg?branch=master)](https://travis-ci.org/dedee/messagepax)
 
+
+## Examples
+
+### Serializing data
+
+    // Create the serializer instance
+    MessagePaxSerializer s = new MessagePaxSerializer(buf);
+
+    // Use the writeX method to add serialize data
+    s.writeInteger(1);
+    s.writeString("Hello World");
+
+    // In the end you can access the buffer and used length to access serialized data
+    System.out.println("Serialized to " + Utils.hex(s.getBuffer(), 0, s.getLength()));
 
 
 Copyright 2014 Dietrich Pfeifle - dedee.de
