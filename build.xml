@@ -12,6 +12,11 @@
 
 	<ivy:cachepath pathid="ivyclasspath" resolveId="ivy" file="ivy.xml" />
 
+	<target name="ivy_bootstrap">
+		<mkdir dir="${user.home}/.ant/lib" />
+		<get dest="${user.home}/.ant/lib/ivy.jar" src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.3.0/ivy-2.3.0.jar" />
+	</target>
+
 	<target name="init">
 		<tstamp />
 		<mkdir dir="${build}" />
@@ -27,7 +32,7 @@
 		<!--		<ivy:cleancache />   -->
 	</target>
 
-	<target name="compile" depends="init" description="compile the source ">
+	<target name="compile" depends="init" description="compile the source">
 		<javac includeantruntime="false" srcdir="${src}" destdir="${build}">
 			<src path="${src}/main/java" />
 			<src path="${src}/test/java" />
