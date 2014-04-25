@@ -26,6 +26,20 @@ Build Status:
     System.out.println("Serialized to " + Utils.hex(s.getBuffer(), 0, s.getLength()));
 
 
+### Deserializing data
+
+    MessagePaxDeserializer s = new MessagePaxDeserializer(buf);
+	Integer i = d.readInteger();
+	String s = d.readString();
+
+
+## Build
+
+You need to install ANT and IVY. Use ANT build file 'build.xml' to build messagepax.jar.
+
+
+## License
+
 Copyright 2014 Dietrich Pfeifle - dedee.de
 
 Licensed under the Apache License, Version 2.0 (the "License");
