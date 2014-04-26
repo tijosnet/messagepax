@@ -25,7 +25,7 @@ public class Utils {
 		StringBuilder sb = new StringBuilder();
 		for (int i = off; i < (off + len); i++) {
 			sb.append(CHARS[(b[i] >> 4) & 0x0f]);
-			sb.append(CHARS[(b[i] >> 0) & 0x0f]);
+			sb.append(CHARS[(b[i]) & 0x0f]);
 		}
 		return sb.toString();
 	}

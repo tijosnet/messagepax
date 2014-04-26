@@ -155,7 +155,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 				pos--;
 				l = readInteger();
 			}
-			return Long.valueOf(l);
+			return l;
 		}
 	}
 
@@ -274,7 +274,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 	 * @throws IOException
 	 *             If value could not be decoded correctly
 	 */
-	public Integer readListBegin() {
+	public Integer readListBegin() throws IOException {
 		int x = readByte();
 		if (isNil(x)) {
 			return null;
@@ -312,7 +312,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 	 * @throws IOException
 	 *             If value could not be decoded correctly
 	 */
-	public Integer readMapBegin() {
+	public Integer readMapBegin() throws IOException {
 		int x = readByte();
 		if (isNil(x)) {
 			return null;

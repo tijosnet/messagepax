@@ -11,7 +11,7 @@ public abstract class BaseDeserializer {
 	protected byte[] b;
 
 	/** Actual read position in buffer */
-	protected int pos;
+    protected int pos;
 
 	/**
 	 * Creates basic deserializer for given buffer. Buffer need to contain
@@ -43,7 +43,7 @@ public abstract class BaseDeserializer {
 	protected int readInt16() {
 		int ret = 0;
 		ret |= b[pos++] << 8;
-		ret |= (b[pos++] & 0xff) << 0;
+		ret |= (b[pos++] & 0xff);
 		return ret;
 	}
 
@@ -57,7 +57,7 @@ public abstract class BaseDeserializer {
 		ret |= b[pos++] << 24;
 		ret |= (b[pos++] & 0xff) << 16;
 		ret |= (b[pos++] & 0xff) << 8;
-		ret |= (b[pos++] & 0xff) << 0;
+		ret |= (b[pos++] & 0xff);
 		return ret;
 	}
 
@@ -75,7 +75,7 @@ public abstract class BaseDeserializer {
 		ret |= ((long) b[pos++] & 0xff) << 24;
 		ret |= ((long) b[pos++] & 0xff) << 16;
 		ret |= ((long) b[pos++] & 0xff) << 8;
-		ret |= ((long) b[pos++] & 0xff) << 0;
+		ret |= ((long) b[pos++] & 0xff);
 		return ret;
 	}
 

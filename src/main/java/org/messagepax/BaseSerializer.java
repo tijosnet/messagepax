@@ -43,7 +43,7 @@ public abstract class BaseSerializer {
 	 */
 	public void addInt16(int x) {
 		b[pos++] = (byte) ((x >>> 8) & 0xff);
-		b[pos++] = (byte) ((x >>> 0) & 0xff);
+		b[pos++] = (byte) ((x) & 0xff);
 	}
 
 	/**
@@ -56,7 +56,7 @@ public abstract class BaseSerializer {
 		b[pos++] = (byte) ((x >>> 24) & 0xff);
 		b[pos++] = (byte) ((x >>> 16) & 0xff);
 		b[pos++] = (byte) ((x >>> 8) & 0xff);
-		b[pos++] = (byte) ((x >>> 0) & 0xff);
+		b[pos++] = (byte) ((x) & 0xff);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public abstract class BaseSerializer {
 		b[pos++] = (byte) ((x >>> 24) & 0xff);
 		b[pos++] = (byte) ((x >>> 16) & 0xff);
 		b[pos++] = (byte) ((x >>> 8) & 0xff);
-		b[pos++] = (byte) ((x >>> 0) & 0xff);
+		b[pos++] = (byte) ((x) & 0xff);
 	}
 
 	/**
