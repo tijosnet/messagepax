@@ -167,6 +167,23 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 	}
 
 	/**
+	 * Writes byte array content with a length prefix.
+	 * 
+	 * @param buffer
+	 *            Buffer to use as source
+	 * @throws IOException
+	 *             If object could not be serialized
+	 */
+	public void writeByteArray(byte[] buffer) throws IOException {
+		if (buffer == null) {
+			writeNil();
+		} else {
+			writeByteArrayLength(buffer.length);
+			addBytes(buffer, 0, buffer.length);
+		}
+	}
+
+	/**
 	 * Writes List object into the buffer. If object is null a MSGPACK NIL
 	 * object is stored.
 	 * 
