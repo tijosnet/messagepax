@@ -5,13 +5,13 @@ package org.messagepax;
  * on an internal buffer (simple byte array) and provides a simple stream based
  * API.
  */
-public abstract class BaseDeserializer {
+public class BaseDeserializer {
 
 	/** Buffer */
 	protected byte[] b;
 
 	/** Actual read position in buffer */
-    protected int pos;
+	protected int pos;
 
 	/**
 	 * Creates basic deserializer for given buffer. Buffer need to contain
@@ -20,7 +20,7 @@ public abstract class BaseDeserializer {
 	 * @param b
 	 *            Buffer containing serialized data (MSGPACK format)
 	 */
-	public BaseDeserializer(byte[] b) {
+	protected BaseDeserializer(byte[] b) {
 		this.b = b;
 		this.pos = 0;
 	}

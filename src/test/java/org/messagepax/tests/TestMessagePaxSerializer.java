@@ -3,7 +3,7 @@ package org.messagepax.tests;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,8 +25,8 @@ public class TestMessagePaxSerializer extends TestCase {
 	public void testBoolean() throws Exception {
 		s.reset();
 		s.writeBoolean(null);
-		s.writeBoolean(false);
-		s.writeBoolean(true);
+		s.writeBoolean(Boolean.FALSE);
+		s.writeBoolean(Boolean.TRUE);
 		assertEquals("C0C2C3", s.toHexString());
 	}
 
@@ -98,29 +98,35 @@ public class TestMessagePaxSerializer extends TestCase {
 		s.writeLong(1);
 		assertEquals("01", s.toHexString());
 		s.reset();
-		s.writeLong(-0x80000000L);
+		s.writeLong(Long.valueOf(-0x80000000L));
 		assertEquals("D280000000", s.toHexString());
 		s.reset();
-		s.writeLong(-0x80000001L);
+		s.writeLong(Long.valueOf(-0x80000001L));
 		assertEquals("D3FFFFFFFF7FFFFFFF", s.toHexString());
 		s.reset();
-		s.writeLong(0x80000000L);
+		s.writeLong(Long.valueOf(0x80000000L));
 		assertEquals("D280000000", s.toHexString());
 		s.reset();
-		s.writeLong(0x8000000000L);
+		s.writeLong(Long.valueOf(0x8000000000L));
 		assertEquals("CF0000008000000000", s.toHexString());
 	}
 
 	public void testByteArray() throws Exception {
 		s.reset();
 		s.writeByteArray(null, 0, 0);
+		assertEquals("C0", s.toHexString());
+
+		s.reset();
 		s.writeByteArray(new byte[] { 1, 2, 3, 4, 5 }, 0, 5);
+		assertEquals("C4050102030405", s.toHexString());
+
+		s.reset();
 		byte[] d = new byte[40];
 		for (int i = 0; i < d.length; i++)
 			d[i] = (byte) i;
 		s.writeByteArray(d, 0, d.length);
 		assertEquals(
-				"C0A50102030405DA0028000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F2021222324252627",
+				"C428000102030405060708090A0B0C0D0E0F101112131415161718191A1B1C1D1E1F2021222324252627",
 				s.toHexString());
 	}
 
@@ -171,7 +177,7 @@ public class TestMessagePaxSerializer extends TestCase {
 
 	public void testAnotherMap() throws Exception {
 		s.reset();
-		Map<Integer, String> map = new HashMap<Integer, String>();
+		Map<Integer, String> map = new LinkedHashMap<Integer, String>();
 		map.put(1, "1");
 		map.put(2, "2");
 		map.put(3, "3");
@@ -190,10 +196,10 @@ public class TestMessagePaxSerializer extends TestCase {
 		s.writeFloat(null);
 		assertEquals("C0", s.toHexString());
 		s.reset();
-		s.writeFloat(1.0f);
+		s.writeFloat(Float.valueOf(1.0f));
 		assertEquals("CA3F800000", s.toHexString());
 		s.reset();
-		s.writeFloat(-1.0f);
+		s.writeFloat(Float.valueOf(-1.0f));
 		assertEquals("CABF800000", s.toHexString());
 	}
 
@@ -202,10 +208,10 @@ public class TestMessagePaxSerializer extends TestCase {
 		s.writeDouble(null);
 		assertEquals("C0", s.toHexString());
 		s.reset();
-		s.writeDouble(1.0d);
+		s.writeDouble(Double.valueOf(1.0d));
 		assertEquals("CB3FF0000000000000", s.toHexString());
 		s.reset();
-		s.writeDouble(-1.0d);
+		s.writeDouble(Double.valueOf(-1.0d));
 		assertEquals("CBBFF0000000000000", s.toHexString());
 	}
 
@@ -221,6 +227,10 @@ public class TestMessagePaxSerializer extends TestCase {
 		s.reset();
 		s.writeBigInteger(new BigInteger("9223372036854775807")); // 7FFFFFFFFFFFFFFF
 		assertEquals("CF7FFFFFFFFFFFFFFF", s.toHexString());
+
+		s.reset();
+		s.writeBigInteger(null);
+		assertEquals("C0", s.toHexString());
 	}
 
 	public void testSerializeDifferentIntegers() throws IOException {
@@ -242,6 +252,25 @@ public class TestMessagePaxSerializer extends TestCase {
 		}
 		assertEquals(
 				"AB48656C6C6F20776F726C64A131A0DA002B54686520717569636B2062726F776E20666F78206A756D7073206F76657220746865206C617A7920646F67C0",
+				s.toHexString());
+	}
+
+	public void testStringMap() throws IOException {
+		Map<String, String> map = new LinkedHashMap<String, String>();
+		map.put("1", "2");
+		s.reset();
+		s.writeMapStringString(map);
+		assertEquals("81A131A132", s.toHexString());
+	}
+
+	public void testWriteString() throws Exception {
+		s.reset();
+		s.writeString("0");
+		assertEquals("A130", s.toHexString());
+
+		s.reset();
+		s.writeString("01234567890123456789");
+		assertEquals("B43031323334353637383930313233343536373839",
 				s.toHexString());
 	}
 }

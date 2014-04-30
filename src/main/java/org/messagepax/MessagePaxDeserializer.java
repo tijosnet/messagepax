@@ -205,7 +205,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		if (isNil(x)) {
 			return null;
 		} else {
-			int len = readLen(x);
+			int len = readByteArrayOrStringLen(x);
 			byte[] ret = new byte[len];
 			System.arraycopy(b, pos, ret, 0, len);
 			pos += len;
@@ -225,8 +225,9 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 		if (isNil(x)) {
 			return null;
 		} else {
-			int len = readLen(x);
-			String s = new String(b, pos, len, Consts.STRING_ENCODING);
+			int len = readByteArrayOrStringLen(x);
+			String s = new String(b, pos, len,
+					MessagePaxSerializer.STRING_ENCODING);
 			pos += len;
 			return s;
 		}
@@ -241,7 +242,7 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 	 *            First byte containing type and sometimes length too
 	 * @return Length information
 	 */
-	private int readLen(int x) {
+	private int readByteArrayOrStringLen(int x) {
 		int len = 0;
 		if ((x & 0xa0) == 0xa0) {
 			// fixstr stores a byte array whose length is upto 31 bytes:
@@ -263,6 +264,24 @@ public class MessagePaxDeserializer extends BaseDeserializer {
 			// | 0xdb |AAAAAAAA|AAAAAAAA|AAAAAAAA|AAAAAAAA| data |
 			// +------+--------+--------+--------+--------+======+
 			len = readInt32() & 0x7fffffff;
+		} else if (x == 0xc4) {
+			// bin 8 stores a byte array whose length is upto (2^8)-1 bytes:
+			// +------+--------+======+
+			// | 0xc4 |XXXXXXXX| data |
+			// +------+--------+======+
+			len = readByte();
+		} else if (x == 0xc5) {
+			// bin 16 stores a byte array whose length is upto (2^16)-1 bytes:
+			// +------+--------+--------+======+
+			// | 0xc5 |YYYYYYYY|YYYYYYYY| data |
+			// +------+--------+--------+======+
+			len = readInt16();
+		} else if (x == 0xc6) {
+			// bin 32 stores a byte array whose length is upto (2^32)-1 bytes:
+			// +------+--------+--------+--------+--------+======+
+			// | 0xc6 |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ| data |
+			// +------+--------+--------+--------+--------+======+
+			len = readInt32();
 		}
 		return len;
 	}

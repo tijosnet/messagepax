@@ -21,6 +21,11 @@ import java.util.Map;
 public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 
 	/**
+	 * String encoding
+	 */
+	protected static final String STRING_ENCODING = "UTF-8";
+
+	/**
 	 * Creates a serializer with destination buffer which need to be large
 	 * enough to keep all the data you write into.
 	 * 
@@ -126,13 +131,39 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 	 *             If object could not be serialized
 	 */
 	public void writeString(String s) throws IOException {
-		byte[] buffer = null;
-		int len = 0;
 		if (s != null) {
-			buffer = s.getBytes(Consts.STRING_ENCODING);
+			// TODO Optimize buffer usage
+			byte[] buffer = null;
+			int len = 0;
+			buffer = s.getBytes(STRING_ENCODING);
 			len = buffer.length;
+			writeStringLength(len);
+			addBytes(buffer, 0, len);
+		} else {
+			writeNil();
 		}
-		writeByteArray(buffer, 0, len);
+	}
+
+	/**
+	 * Writes byte array content with a length prefix.
+	 * 
+	 * @param buffer
+	 *            Buffer to use as source
+	 * @param offset
+	 *            Offset where to start
+	 * @param len
+	 *            Number of bytes to wrote
+	 * @throws IOException
+	 *             If object could not be serialized
+	 */
+	public void writeByteArray(byte[] buffer, int offset, int len)
+			throws IOException {
+		if (buffer == null) {
+			writeNil();
+		} else {
+			writeByteArrayLength(len);
+			addBytes(buffer, offset, len);
+		}
 	}
 
 	/**

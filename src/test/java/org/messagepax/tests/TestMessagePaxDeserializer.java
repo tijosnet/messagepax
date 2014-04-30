@@ -2,10 +2,13 @@ package org.messagepax.tests;
 
 import java.io.IOException;
 import java.math.BigInteger;
+import java.util.List;
+import java.util.Map;
 
 import junit.framework.TestCase;
 
 import org.messagepax.MessagePaxDeserializer;
+import org.messagepax.Utils;
 
 public class TestMessagePaxDeserializer extends TestCase {
 
@@ -56,6 +59,16 @@ public class TestMessagePaxDeserializer extends TestCase {
 		assertEquals((Integer) (-1), d.readInteger());
 	}
 
+	public void testIntegerFail() {
+		d.reset("CF0102");
+		try {
+			d.readInteger();
+			fail("IOException expected");
+		} catch (IOException e) {
+			// OK
+		}
+	}
+
 	public void testBoolean() throws IOException {
 		d.reset("C0");
 		assertNull(d.readBoolean());
@@ -63,6 +76,13 @@ public class TestMessagePaxDeserializer extends TestCase {
 		assertFalse(d.readBoolean());
 		d.reset("C3");
 		assertTrue(d.readBoolean());
+		d.reset("C4");
+		try {
+			d.readBoolean();
+			fail("IOException expected");
+		} catch (IOException e) {
+			// OK
+		}
 	}
 
 	public void testLong() throws IOException {
@@ -110,6 +130,8 @@ public class TestMessagePaxDeserializer extends TestCase {
 		assertEquals(new BigInteger("4294967296"), d.readBigInteger());
 		d.reset("CF7FFFFFFFFFFFFFFF");
 		assertEquals(new BigInteger("9223372036854775807"), d.readBigInteger());
+		d.reset("C0");
+		assertNull(d.readBigInteger());
 	}
 
 	public void testDeserializeDifferentIntegers() throws IOException {
@@ -128,4 +150,75 @@ public class TestMessagePaxDeserializer extends TestCase {
 		}
 	}
 
+	public void testReadString() throws IOException {
+		d.reset("A130");
+		assertEquals("0", d.readString());
+		d.reset("DA000130");
+		assertEquals("0", d.readString());
+		d.reset("DB0000000130");
+		assertEquals("0", d.readString());
+	}
+
+	public void testReadByteArray() throws IOException {
+		d.reset("C401FF");
+		assertEquals("FF", Utils.hex(d.readByteArray()));
+		d.reset("C50001FF");
+		assertEquals("FF", Utils.hex(d.readByteArray()));
+		d.reset("C600000001FF");
+		assertEquals("FF", Utils.hex(d.readByteArray()));
+	}
+
+	public void testReadListBegin() throws IOException {
+		d.reset("920102");
+		int len = d.readListBegin().intValue();
+		assertEquals(2, len);
+		assertEquals(1, d.readInteger().intValue());
+		assertEquals(2, d.readInteger().intValue());
+
+		d.reset("DC00020102");
+		len = d.readListBegin().intValue();
+		assertEquals(2, len);
+		assertEquals(1, d.readInteger().intValue());
+		assertEquals(2, d.readInteger().intValue());
+
+		d.reset("DD000000020102");
+		len = d.readListBegin().intValue();
+		assertEquals(2, len);
+		assertEquals(1, d.readInteger().intValue());
+		assertEquals(2, d.readInteger().intValue());
+	}
+
+	public void testReadMapBegin() throws IOException {
+		d.reset("810102");
+		int len = d.readMapBegin().intValue();
+		assertEquals(1, len);
+		assertEquals(1, d.readInteger().intValue());
+		assertEquals(2, d.readInteger().intValue());
+
+		d.reset("DE00010102");
+		len = d.readMapBegin().intValue();
+		assertEquals(1, len);
+		assertEquals(1, d.readInteger().intValue());
+		assertEquals(2, d.readInteger().intValue());
+
+		d.reset("DF000000010102");
+		len = d.readMapBegin().intValue();
+		assertEquals(1, len);
+		assertEquals(1, d.readInteger().intValue());
+		assertEquals(2, d.readInteger().intValue());
+	}
+
+	public void testReadStringList() throws IOException {
+		d.reset("91A130");
+		List<String> list = d.readStringList();
+		assertEquals(1, list.size());
+		assertEquals("0", list.get(0));
+	}
+
+	public void testReadStringMap() throws IOException {
+		d.reset("81A130A131");
+		Map<String, String> map = d.readStringMap();
+		assertEquals(1, map.size());
+		assertEquals("1", map.get("0"));
+	}
 }

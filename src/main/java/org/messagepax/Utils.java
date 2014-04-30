@@ -8,6 +8,12 @@ public class Utils {
 			'5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F', };
 
 	/**
+	 * Private constructor
+	 */
+	private Utils() {
+	}
+
+	/**
 	 * Returns a hex string for a byte buffer
 	 * 
 	 * @param b
