@@ -3,10 +3,11 @@
 Minimalistic MessagePack implementation for Java.
 
 * Supports Java 5
-* No dependencies
+* No dependencies. Just a few Java classes.
 * Very basic interface but fast. No casts. Typesafe.
 * Supports Boolean, Integer, Float, BigInteger, String, Byte array, List and Maps
 * No support yet for extended type
+* If you do not need a stream based API this one is perfect for your usecase. Very fast and low memory consumption. Perfect for embedded devices and Android
 
 Based on the MessagePack object serialization specification of Sadayuki Furuhashi.
 https://github.com/msgpack/msgpack/blob/master/spec.md

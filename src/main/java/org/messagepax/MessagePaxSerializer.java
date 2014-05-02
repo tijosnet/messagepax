@@ -192,7 +192,7 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 	 * @throws IOException
 	 *             If object could not be serialized
 	 */
-	public void writeListString(List<String> list) throws IOException {
+	public void writeStringList(List<String> list) throws IOException {
 		if (list == null) {
 			writeNil();
 		} else {
@@ -213,7 +213,7 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 	 * @throws IOException
 	 *             If object could not be serialized
 	 */
-	public void writeMapStringString(Map<String, String> map)
+	public void writeStringMap(Map<String, String> map)
 			throws IOException {
 		if (map == null) {
 			writeNil();

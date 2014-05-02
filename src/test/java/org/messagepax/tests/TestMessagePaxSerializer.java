@@ -143,19 +143,19 @@ public class TestMessagePaxSerializer extends TestCase {
 	public void testListString() throws Exception {
 		s.reset();
 		List<String> list = null;
-		s.writeListString(list);
+		s.writeStringList(list);
 		assertEquals("C0", s.toHexString());
 		list = new ArrayList<String>();
-		s.writeListString(list);
+		s.writeStringList(list);
 		assertEquals("C090", s.toHexString());
 		list.add("A");
 		list.add("B");
-		s.writeListString(list);
+		s.writeStringList(list);
 		assertEquals("C09092A141A142", s.toHexString());
 		for (int i = 0; i < 40; i++) {
 			list.add("C");
 		}
-		s.writeListString(list);
+		s.writeStringList(list);
 		assertEquals(
 				"C09092A141A142DC002AA141A142A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143A143",
 				s.toHexString());
@@ -259,7 +259,7 @@ public class TestMessagePaxSerializer extends TestCase {
 		Map<String, String> map = new LinkedHashMap<String, String>();
 		map.put("1", "2");
 		s.reset();
-		s.writeMapStringString(map);
+		s.writeStringMap(map);
 		assertEquals("81A131A132", s.toHexString());
 	}
 
