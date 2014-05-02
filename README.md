@@ -42,7 +42,7 @@ Build Status:
 
 ## Build
 
-You need to install ANT and IVY. Use ANT build file 'build.xml' to build messagepax.jar.
+Use ANT build file 'build.xml' to build messagepax.jar.
 
 
 ## License
