@@ -1,7 +1,12 @@
-
 #messagepax
 
 Minimalistic MessagePack implementation for Java.
+
+* Supports Java 5
+* No dependencies
+* Very basic interface but fast. No casts. Typesafe.
+* Supports Boolean, Integer, Float, BigInteger, String, Byte array, List and Maps
+* No support yet for extended type
 
 Based on the MessagePack object serialization specification of Sadayuki Furuhashi.
 https://github.com/msgpack/msgpack/blob/master/spec.md
