@@ -10,10 +10,11 @@ import java.util.Map;
 import junit.framework.TestCase;
 
 import org.messagepax.MessagePaxSerializer;
+import org.messagepax.Utils;
 
 public class TestMessagePaxSerializer extends TestCase {
 
-	private byte[] buf = new byte[256];
+	private byte[] buf = new byte[2048];
 	MessagePaxSerializer s = new MessagePaxSerializer(buf);
 
 	public void testNil() throws Exception {
@@ -272,5 +273,56 @@ public class TestMessagePaxSerializer extends TestCase {
 		s.writeString("01234567890123456789");
 		assertEquals("B43031323334353637383930313233343536373839",
 				s.toHexString());
+	}
+
+	public void testExtData() throws Exception {
+		s.reset();
+		s.writeExtData(1, null);
+		assertEquals("C0", s.toHexString());
+
+		s.reset();
+		s.writeExtData(1, Utils.dehex("01"));
+		assertEquals("D40101", s.toHexString());
+
+		s.reset();
+		s.writeExtData(1, Utils.dehex("0102"));
+		assertEquals("D5010102", s.toHexString());
+
+		s.reset();
+		s.writeExtData(1, Utils.dehex("01020304"));
+		assertEquals("D60101020304", s.toHexString());
+
+		s.reset();
+		s.writeExtData(1, Utils.dehex("0102030405060708"));
+		assertEquals("D7010102030405060708", s.toHexString());
+
+		s.reset();
+		s.writeExtData(1, Utils.dehex("01020304050607080102030405060708"));
+		assertEquals("D80101020304050607080102030405060708", s.toHexString());
+
+		s.reset();
+		s.writeExtData(1, Utils.dehex("010203"));
+		assertEquals("C70301010203", s.toHexString());
+
+		byte b[] = new byte[255];
+		s.reset();
+		s.writeExtData(1, b);
+		assertEquals(0xc7, s.getBuffer()[0] & 0xff);
+		assertEquals(255, s.getBuffer()[1] & 0xff);
+		assertEquals(1, s.getBuffer()[2] & 0xff);
+		for (int i = 0; i < 255; i++) {
+			assertEquals(0, s.getBuffer()[3 + i] & 0xff);
+		}
+
+		b = new byte[256];
+		s.reset();
+		s.writeExtData(1, b);
+		assertEquals(0xc8, s.getBuffer()[0] & 0xff);
+		assertEquals(0x01, s.getBuffer()[1] & 0xff);
+		assertEquals(0x00, s.getBuffer()[2] & 0xff);
+		assertEquals(0x01, s.getBuffer()[3] & 0xff);
+		for (int i = 0; i < 256; i++) {
+			assertEquals(0, s.getBuffer()[4 + i] & 0xff);
+		}
 	}
 }

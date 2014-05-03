@@ -213,8 +213,7 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 	 * @throws IOException
 	 *             If object could not be serialized
 	 */
-	public void writeStringMap(Map<String, String> map)
-			throws IOException {
+	public void writeStringMap(Map<String, String> map) throws IOException {
 		if (map == null) {
 			writeNil();
 		} else {
@@ -257,4 +256,91 @@ public class MessagePaxSerializer extends MessagePaxNativeSerializer {
 			// }
 		}
 	}
+
+	/**
+	 * Writes extended data object into the buffer. If object is null a MSGPACK
+	 * NIL object is stored.
+	 * 
+	 * @param type
+	 *            Extended Type ID (set by application)
+	 * @param data
+	 *            Byte array containing the extended data
+	 * @throws IOException
+	 *             If object could not be serialized
+	 */
+	public void writeExtData(int type, byte[] data) throws IOException {
+		if (data == null) {
+			writeNil();
+		} else {
+			int length = data.length;
+			if (length == 1) {
+				// fixext 1 stores an integer and a byte array whose length is 1
+				// byte
+				// +------+------+------+
+				// | 0xd4 | type | data |
+				// +------+------+------+
+				addByte(0xd4);
+				addByte(type);
+				addBytes(data, 0, length);
+			} else if (length == 2) {
+				// fixext 2 stores an integer and a byte array whose length is 2
+				// bytes
+				// +------+------+------+------+
+				// | 0xd5 | type | data | data |
+				// +------+------+------+------+
+				addByte(0xd5);
+				addByte(type);
+				addBytes(data, 0, length);
+			} else if (length == 4) {
+				// fixext 4
+				addByte(0xd6);
+				addByte(type);
+				addBytes(data, 0, length);
+			} else if (length == 8) {
+				// fixext 8
+				addByte(0xd7);
+				addByte(type);
+				addBytes(data, 0, length);
+			} else if (length == 16) {
+				// fixext 16
+				addByte(0xd8);
+				addByte(type);
+				addBytes(data, 0, length);
+			} else if (length < 256) {
+				// ext 8 stores an integer and a byte array whose length is upto
+				// (2^8)-1
+				// bytes:
+				// +------+--------+------+======+
+				// | 0xc7 |XXXXXXXX| type | data |
+				// +------+--------+------+======+
+				addByte(0xc7);
+				addByte(length);
+				addByte(type);
+				addBytes(data, 0, length);
+			} else if (length < 65536) {
+				// ext 16 stores an integer and a byte array whose length is
+				// upto
+				// (2^16)-1 bytes:
+				// +------+--------+--------+------+======+
+				// | 0xc8 |YYYYYYYY|YYYYYYYY| type | data |
+				// +------+--------+--------+------+======+
+				addByte(0xc8);
+				addInt16(length);
+				addByte(type);
+				addBytes(data, 0, length);
+			} else {
+				// ext 32 stores an integer and a byte array whose length is
+				// upto
+				// (2^32)-1 bytes:
+				// +------+--------+--------+--------+--------+------+======+
+				// | 0xc9 |ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ|ZZZZZZZZ| type | data |
+				// +------+--------+--------+--------+--------+------+======+
+				addByte(0xc9);
+				addInt32(length);
+				addByte(type);
+				addBytes(data, 0, length);
+			}
+		}
+	}
+
 }
