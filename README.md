@@ -35,10 +35,40 @@ Build Status:
 
 ### Deserializing data
 
-    MessagePaxDeserializer s = new MessagePaxDeserializer(buf);
+    MessagePaxDeserializer d = new MessagePaxDeserializer(buf);
 	Integer i = d.readInteger();
 	String s = d.readString();
 
+### Lists
+
+	List<Integer> list = new ArrayList<Integer>();
+    MessagePaxDeserializer d = new MessagePaxDeserializer(buf);
+	Integer length = d.readListBegin();
+	if (length != null) {
+		for (int i=0; i<length; i++) {
+			list.add(d.readInteger());
+		}
+	}
+	
+### Preventing NullPointerExceptions
+
+MSGPACK allows and defines null Values in the protocol. During deserialization the caller 
+of the API need to avoid NullPointerExceptions and handle null values accordingly.
+
+Right:
+
+	Integer value = d.readInteger();
+	if (value != null) {
+		int raw = value.intValue();
+	}
+
+Wrong:
+
+	int raw = d.readInteger();
+	
+In the second example above the Java compiler uses autoboxing and add the intValue call for
+you. Looks simpler but will raise a NullPointerException whenever you get null from the
+data.
 
 ## Build
 
